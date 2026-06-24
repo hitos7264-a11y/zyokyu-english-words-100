@@ -1,0 +1,66 @@
+/* ============================================================
+ *  上級英単語100  —  Responsive (Mobile-first → larger)
+ *  © 2026 上級英単語100
+ *  スマホ操作・表示に特化。大画面ではカードを上品に整列。
+ * ============================================================ */
+
+/* ---------- 極小スマホ (〜360px) ---------- */
+@media (max-width: 360px) {
+  body { font-size: 15px; }
+  .app-main { padding-left: var(--sp-3); padding-right: var(--sp-3); }
+  .hero { padding: var(--sp-5) var(--sp-4); }
+  .quick-grid { gap: var(--sp-2); }
+  .quick-card { padding: var(--sp-3); }
+  .tab span { font-size: 9.5px; }
+  .wc-word { font-size: 21px; }
+}
+
+/* ---------- 横向きスマホ ---------- */
+@media (max-height: 480px) and (orientation: landscape) {
+  .flash-card-wrap { aspect-ratio: 16 / 9; max-width: 520px; }
+  .hero::after { font-size: 120px; }
+}
+
+/* ---------- タブレット以上 (601px〜) ---------- */
+@media (min-width: 601px) {
+  :root { --header-h: 66px; }
+  body { font-size: 16.5px; }
+
+  .quick-grid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-4); }
+
+  /* 単語リストを2カラムに */
+  .word-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+  .alpha-divider { grid-column: 1 / -1; }
+
+  .hero-stats { gap: var(--sp-4); }
+  .flash-card-wrap { max-width: 420px; }
+}
+
+/* ---------- 大画面 (901px〜) — デスクトップでも上品に ---------- */
+@media (min-width: 901px) {
+  :root { --maxw: 860px; }
+
+  .word-list { grid-template-columns: repeat(2, 1fr); }
+  .tabbar { max-width: 460px; }
+
+  /* ホバー演出を強めに */
+  .word-card:hover { transform: translateY(-4px); }
+}
+
+/* ---------- 縦長画面でのフラッシュカード調整 ---------- */
+@media (min-height: 800px) {
+  .flash-card-wrap { aspect-ratio: 3 / 4.2; }
+}
+
+/* ---------- セーフエリア (ノッチ端末) ---------- */
+@supports (padding: env(safe-area-inset-top)) {
+  .app-header { padding-top: env(safe-area-inset-top); height: calc(var(--header-h) + env(safe-area-inset-top)); }
+}
+
+/* ---------- 印刷 ---------- */
+@media print {
+  .app-header, .tabbar, .alpha-rail, .toolbar, .quick-grid, .hero-stats,
+  .scrim, .sheet, .toast-stack, .header-actions { display: none !important; }
+  body { background: #fff; color: #000; }
+  .word-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+}

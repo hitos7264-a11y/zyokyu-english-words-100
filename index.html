@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#2f5d62">
+<meta name="description" content="大学入試 上級英単語100 — 私大入試・共通テスト頻出の上級語彙を、スマホで美しく学べる単語アプリ。フラッシュカード・クイズ・索引つき。">
+<title>上級英単語100 ｜ 大学入試 上級語彙アプリ</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+
+<!-- Styles -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/study.css">
+<link rel="stylesheet" href="css/overlay.css">
+<link rel="stylesheet" href="css/extras.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- 背景装飾 -->
+<div class="paper-bg" aria-hidden="true"></div>
+<div class="paper-grain" aria-hidden="true"></div>
+<div class="deco-blob b1" aria-hidden="true"></div>
+<div class="deco-blob b2" aria-hidden="true"></div>
+<div class="deco-blob b3" aria-hidden="true"></div>
+
+<!-- SVG グラデーション定義 (リング用) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2f5d62"/>
+      <stop offset="100%" stop-color="#5f7048"/>
+    </linearGradient>
+    <linearGradient id="quizGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a8843b"/>
+      <stop offset="100%" stop-color="#b5532f"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="app">
+
+  <!-- ============== HEADER ============== -->
+  <header class="app-header" id="appHeader">
+    <div class="brand">
+      <span class="brand-seal" aria-hidden="true">英</span>
+      <span class="brand-text">
+        <span class="brand-title">上級英単語</span>
+        <span class="brand-sub">Advanced 100</span>
+      </span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="shuffleBtn" aria-label="ランダムに1語表示" title="気まぐれ1語">
+        <i class="fa-solid fa-dice"></i>
+      </button>
+      <button class="icon-btn" id="themeToggle" aria-label="テーマ切り替え" title="ライト/ダーク">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============== MAIN ============== -->
+  <main class="app-main">
+
+    <!-- ===== ホーム ===== -->
+    <section class="view active" id="view-home" data-view="home">
+
+      <div class="hero">
+        <p class="hero-eyebrow">University Entrance Exam</p>
+        <h1 class="hero-title">大学入試<br>上級英単語 <span class="num">100</span></h1>
+        <p class="hero-desc">私大入試・共通テストの読解で狙われる、上級寄りの100語。各語に意味と「ポイント」（派生語・類義/反意・コロケーション・発音）つき。</p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="v" id="statTotal">100<small>語</small></div>
+            <div class="k">収録語数</div>
+          </div>
+          <div class="hero-stat">
+            <div class="v"><span id="statLearned">0</span><small>語</small></div>
+            <div class="k">学習済み</div>
+          </div>
+          <div class="hero-stat">
+            <div class="v"><span id="statFav">0</span><small>語</small></div>
+            <div class="k">お気に入り</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 今日の1語 -->
+      <div class="daily-card" id="dailyCard">
+        <div class="daily-head"><span class="seal-dot"></span> 今日の1語 ／ Word of the day</div>
+        <div class="daily-word en"><span id="dailyWord">—</span><span class="d-pos" id="dailyPos"></span></div>
+        <div class="daily-mean" id="dailyMean"></div>
+        <div class="daily-actions">
+          <button class="daily-btn primary" id="dailyOpen"><i class="fa-solid fa-book-open"></i> 詳しく見る</button>
+          <button class="daily-btn" id="dailySpeak"><i class="fa-solid fa-volume-high"></i> 発音</button>
+        </div>
+      </div>
+
+      <!-- 学習サマリー (進捗バー不使用 → リング) -->
+      <div class="summary-card">
+        <div class="ring-wrap">
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle class="ring-bg" cx="48" cy="48" r="42" fill="none" stroke-width="9"/>
+            <circle class="ring-fg" id="homeRing" cx="48" cy="48" r="42" fill="none" stroke-width="9"
+                    stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
+          </svg>
+          <div class="ring-label">
+            <span class="pct" id="homeRingPct">0<small>%</small></span>
+            <span class="cap">習得度</span>
+          </div>
+        </div>
+        <div class="summary-detail">
+          <h3>あなたの進み具合</h3>
+          <div class="summary-chips">
+            <span class="mini-chip"><span class="dot dot-learned"></span>習得 <b id="chipLearned">0</b></span>
+            <span class="mini-chip"><span class="dot dot-fav"></span>お気に入り <b id="chipFav">0</b></span>
+            <span class="mini-chip"><span class="dot dot-new"></span>未学習 <b id="chipNew">100</b></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- クイック起動 -->
+      <div class="section-head">
+        <h2 class="section-title"><span class="accent-bar"></span>学習をはじめる</h2>
+      </div>
+      <div class="quick-grid">
+        <button class="quick-card qc-flash" data-go="flash">
+          <span class="qc-icon"><i class="fa-solid fa-clone"></i></span>
+          <span class="qc-title">フラッシュカード</span>
+          <span class="qc-desc">めくって覚える。英→意味を反復。</span>
+          <i class="qc-arrow fa-solid fa-arrow-right"></i>
+        </button>
+        <button class="quick-card qc-quiz" data-go="quiz">
+          <span class="qc-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+          <span class="qc-title">クイズ</span>
+          <span class="qc-desc">4択で実力チェック。即採点。</span>
+          <i class="qc-arrow fa-solid fa-arrow-right"></i>
+        </button>
+        <button class="quick-card qc-list" data-go="list">
+          <span class="qc-icon"><i class="fa-solid fa-list-ul"></i></span>
+          <span class="qc-title">単語一覧</span>
+          <span class="qc-desc">辞書のように引く。索引つき。</span>
+          <i class="qc-arrow fa-solid fa-arrow-right"></i>
+        </button>
+        <button class="quick-card qc-review" data-go="review">
+          <span class="qc-icon"><i class="fa-solid fa-star"></i></span>
+          <span class="qc-title">お気に入り復習</span>
+          <span class="qc-desc">付けた印の単語だけ集中。</span>
+          <i class="qc-arrow fa-solid fa-arrow-right"></i>
+        </button>
+        <button class="quick-card qc-spell" data-go="spell" style="grid-column:1 / -1">
+          <span class="qc-icon" style="background:linear-gradient(145deg,var(--clay),#6b543c)"><i class="fa-solid fa-keyboard"></i></span>
+          <span class="qc-title">つづりテスト</span>
+          <span class="qc-desc">意味を見て英単語をタイプ。最初の文字がヒント。</span>
+          <i class="qc-arrow fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- 覚え方のコツ -->
+      <div class="section-head">
+        <h2 class="section-title"><span class="accent-bar"></span>覚え方のコツ</h2>
+        <span class="section-sub">原典より</span>
+      </div>
+      <div class="tips-list" id="tipsList"><!-- JS --></div>
+
+      <!-- About -->
+      <div class="section-head" style="margin-top:var(--sp-7)">
+        <h2 class="section-title"><span class="accent-bar"></span>このアプリについて</h2>
+      </div>
+      <div class="about-card">
+        <h3><i class="fa-solid fa-book-open" style="color:var(--indigo)"></i> 収録内容</h3>
+        <p>「大学入試 上級英単語 100」の全100語を、スマホで快適に学べるよう再構成しました。経済・社会・論説系の頻出語を中心に、ほぼアルファベット順で収録しています。</p>
+        <ul>
+          <li><i class="fa-solid fa-check"></i>各語に「意味」と「ポイント」（派生語・類義/反意・コロケーション・発音/アクセント・入試での狙われ方）</li>
+          <li><i class="fa-solid fa-check"></i>多義語・対義語ペア・発音注意などをタグで色分け</li>
+          <li><i class="fa-solid fa-check"></i>音声読み上げ（端末対応時）で発音も確認</li>
+          <li><i class="fa-solid fa-check"></i>学習状況・お気に入りは端末に自動保存</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <!-- ===== 単語一覧 ===== -->
+    <section class="view" id="view-list" data-view="list">
+      <div class="section-head">
+        <h2 class="section-title"><span class="accent-bar"></span>単語一覧</h2>
+        <span class="section-sub">全 100 語</span>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box" id="searchBox">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="search" id="searchInput" placeholder="英単語・意味・タグで検索…" autocomplete="off" inputmode="search">
+          <button class="search-clear" id="searchClear" aria-label="検索をクリア"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="filter-row" id="filterRow"><!-- JS --></div>
+      </div>
+
+      <div class="sort-bar">
+        <span class="result-count"><b id="resultCount">100</b> 語を表示</span>
+        <span class="sort-select">
+          <i class="fa-solid fa-arrow-down-short-wide"></i>
+          <select id="sortSelect">
+            <option value="no">番号順</option>
+            <option value="alpha">A→Z</option>
+            <option value="alphaDesc">Z→A</option>
+            <option value="learned">未学習を先に</option>
+          </select>
+        </span>
+      </div>
+
+      <div class="word-list" id="wordList"><!-- JS --></div>
+      <div class="empty-state" id="listEmpty" hidden>
+        <div class="es-icon"><i class="fa-regular fa-face-frown-open"></i></div>
+        <h3>見つかりませんでした</h3>
+        <p>検索語やフィルタを変えてお試しください。</p>
+      </div>
+    </section>
+    <nav class="alpha-rail" id="alphaRail" aria-label="アルファベット索引"><!-- JS --></nav>
+
+    <!-- ===== フラッシュカード ===== -->
+    <section class="view" id="view-flash" data-view="flash">
+      <!-- 設定 -->
+      <div id="flashConfig">
+        <div class="section-head">
+          <h2 class="section-title"><span class="accent-bar"></span>フラッシュカード</h2>
+        </div>
+        <div class="config-card">
+          <h3><i class="fa-solid fa-sliders" style="color:var(--indigo)"></i> 出題の設定</h3>
+          <div class="config-row">
+            <span class="config-label">出題範囲</span>
+            <div class="seg" id="flashRange">
+              <button class="active" data-range="all">全100語</button>
+              <button data-range="unlearned">未学習</button>
+              <button data-range="fav">お気に入り</button>
+            </div>
+          </div>
+          <div class="config-row">
+            <span class="config-label">並び順</span>
+            <div class="seg" id="flashOrder">
+              <button class="active" data-order="seq">番号順</button>
+              <button data-order="shuffle">シャッフル</button>
+            </div>
+          </div>
+          <div class="config-row">
+            <span class="config-label">最初に見せる面</span>
+            <div class="seg" id="flashSide">
+              <button class="active" data-side="front">英単語</button>
+              <button data-side="back">意味</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" id="flashStart"><i class="fa-solid fa-play"></i> はじめる</button>
+      </div>
+
+      <!-- 実行 -->
+      <div class="flash-stage" id="flashStage" hidden>
+        <div class="flash-meta">
+          <div class="flash-counter"><span class="cur" id="flashCur">1</span><span class="sep">/</span><span id="flashTotal">100</span></div>
+          <div class="flash-dots" id="flashDots"></div>
+        </div>
+
+        <div class="flash-card-wrap" id="flashCardWrap">
+          <div class="flash-card" id="flashCard">
+            <div class="flash-face flash-front">
+              <span class="fc-no" id="fcNo">#1</span>
+              <span class="fc-pos" id="fcPos">［動］</span>
+              <span class="fc-word en" id="fcWord">word</span>
+              <button class="speak-btn fc-speak" id="fcSpeak"><i class="fa-solid fa-volume-high"></i> 発音</button>
+              <span class="fc-hint"><i class="fa-solid fa-hand-pointer"></i> タップで意味を表示</span>
+            </div>
+            <div class="flash-face flash-back">
+              <div class="fb-word en"><span id="fbWord">word</span><button class="speak-btn fb-speak-inline" id="fbSpeak" style="padding:4px 10px;font-size:11px"><i class="fa-solid fa-volume-high"></i></button></div>
+              <div class="fb-pos" id="fbPos">［動］</div>
+              <div class="fb-divider"></div>
+              <div class="fb-label">意味</div>
+              <div class="fb-meaning" id="fbMeaning">意味</div>
+              <div class="fb-label">ポイント</div>
+              <div class="fb-point" id="fbPoint">ポイント</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flash-controls">
+          <button class="flash-btn again" id="flashAgain"><i class="fa-solid fa-rotate-left"></i><span>もう一度</span></button>
+          <button class="flash-btn flip-toggle" id="flashFlip" aria-label="めくる"><i class="fa-solid fa-repeat"></i></button>
+          <button class="flash-btn good" id="flashGood"><i class="fa-solid fa-check"></i><span>覚えた</span></button>
+        </div>
+      </div>
+
+      <!-- 完了 -->
+      <div class="flash-done" id="flashDone" hidden>
+        <div class="fd-seal">了</div>
+        <h2>ひと回り完了！</h2>
+        <p id="flashDoneMsg">よくがんばりました。</p>
+        <div class="fd-stats">
+          <div class="fd-stat ok"><div class="v" id="fdGood">0</div><div class="k">覚えた</div></div>
+          <div class="fd-stat again"><div class="v" id="fdAgain">0</div><div class="k">もう一度</div></div>
+        </div>
+        <button class="btn-primary" id="flashRestart" style="margin-bottom:var(--sp-3)"><i class="fa-solid fa-rotate"></i> もう一度やる</button>
+        <button class="btn-ghost" id="flashBackHome"><i class="fa-solid fa-house"></i> ホームへ</button>
+      </div>
+    </section>
+
+    <!-- ===== クイズ ===== -->
+    <section class="view" id="view-quiz" data-view="quiz">
+      <div id="quizConfig">
+        <div class="section-head">
+          <h2 class="section-title"><span class="accent-bar"></span>クイズ</h2>
+        </div>
+        <div class="config-card">
+          <h3><i class="fa-solid fa-sliders" style="color:var(--vermilion)"></i> 出題の設定</h3>
+          <div class="config-row">
+            <span class="config-label">出題形式</span>
+            <div class="seg" id="quizType">
+              <button class="active" data-type="e2j">英→意味</button>
+              <button data-type="j2e">意味→英</button>
+              <button data-type="mix">ミックス</button>
+            </div>
+          </div>
+          <div class="config-row">
+            <span class="config-label">問題数</span>
+            <div class="seg" id="quizCount">
+              <button data-count="10">10問</button>
+              <button class="active" data-count="20">20問</button>
+              <button data-count="100">全100問</button>
+            </div>
+          </div>
+          <div class="config-row">
+            <span class="config-label">出題範囲</span>
+            <div class="seg" id="quizRange">
+              <button class="active" data-range="all">全100語</button>
+              <button data-range="unlearned">未学習</button>
+              <button data-range="fav">お気に入り</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" id="quizStart" style="background:linear-gradient(145deg,var(--vermilion),#93421f)"><i class="fa-solid fa-play"></i> スタート</button>
+      </div>
+
+      <div class="quiz-stage" id="quizStage" hidden>
+        <div class="quiz-top">
+          <span class="quiz-progress-text"><span class="cur" id="quizCur">1</span> / <span id="quizMax">20</span></span>
+          <span class="quiz-score"><i class="fa-solid fa-star"></i> <span id="quizScore">0</span></span>
+        </div>
+        <div class="quiz-steps" id="quizSteps"></div>
+
+        <div class="quiz-question">
+          <div class="quiz-q-type" id="quizQType">意味を選べ</div>
+          <div class="quiz-q-word en" id="quizQWord" hidden>word</div>
+          <div class="quiz-q-jp" id="quizQJp" hidden>意味</div>
+          <button class="speak-btn quiz-q-speak" id="quizSpeak" hidden><i class="fa-solid fa-volume-high"></i> 発音</button>
+        </div>
+
+        <div class="quiz-options" id="quizOptions"></div>
+        <button class="quiz-next" id="quizNext">次へ <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+
+      <div class="quiz-result" id="quizResult" hidden>
+        <div class="qr-score-ring">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--surface-sunken)" stroke-width="11"/>
+            <circle id="qrRing" cx="80" cy="80" r="70" fill="none" stroke="url(#quizGrad)" stroke-width="11"
+                    stroke-linecap="round" stroke-dasharray="439.8" stroke-dashoffset="439.8" transform="rotate(-90 80 80)"/>
+          </svg>
+          <div class="qr-num"><span class="big" id="qrCorrect">0</span><span class="small">/ <span id="qrTotal">20</span> 正解</span></div>
+        </div>
+        <h2 id="qrTitle">結果</h2>
+        <p class="qr-msg" id="qrMsg">おつかれさまでした。</p>
+        <div class="qr-review-list" id="qrReviewList"></div>
+        <button class="btn-primary" id="quizRetry" style="margin-bottom:var(--sp-3);background:linear-gradient(145deg,var(--vermilion),#93421f)"><i class="fa-solid fa-rotate"></i> もう一度</button>
+        <button class="btn-ghost" id="quizBackHome"><i class="fa-solid fa-house"></i> ホームへ</button>
+      </div>
+    </section>
+
+    <!-- ===== お気に入り復習 ===== -->
+    <section class="view" id="view-review" data-view="review">
+      <div class="section-head">
+        <h2 class="section-title"><span class="accent-bar"></span>お気に入り復習</h2>
+        <span class="section-sub"><b id="reviewCount" style="color:var(--vermilion)">0</b> 語</span>
+      </div>
+      <div class="word-list" id="reviewList"></div>
+      <div class="empty-state" id="reviewEmpty">
+        <div class="es-icon"><i class="fa-regular fa-star"></i></div>
+        <h3>お気に入りはまだありません</h3>
+        <p>単語カードの<i class="fa-regular fa-star" style="color:var(--vermilion)"></i>を押すと、ここに集まります。</p>
+      </div>
+    </section>
+
+    <!-- ===== つづりテスト ===== -->
+    <section class="view" id="view-spell" data-view="spell">
+      <div id="spellConfig">
+        <div class="section-head">
+          <h2 class="section-title"><span class="accent-bar"></span>つづりテスト</h2>
+        </div>
+        <div class="config-card">
+          <h3><i class="fa-solid fa-sliders" style="color:var(--clay)"></i> 出題の設定</h3>
+          <div class="config-row">
+            <span class="config-label">問題数</span>
+            <div class="seg" id="spellCount">
+              <button data-count="10">10問</button>
+              <button class="active" data-count="20">20問</button>
+              <button data-count="100">全100問</button>
+            </div>
+          </div>
+          <div class="config-row">
+            <span class="config-label">ヒント</span>
+            <div class="seg" id="spellHint">
+              <button class="active" data-hint="first">最初の文字</button>
+              <button data-hint="length">文字数のみ</button>
+              <button data-hint="none">なし</button>
+            </div>
+          </div>
+          <div class="config-row">
+            <span class="config-label">出題範囲</span>
+            <div class="seg" id="spellRange">
+              <button class="active" data-range="all">全100語</button>
+              <button data-range="unlearned">未学習</button>
+              <button data-range="fav">お気に入り</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" id="spellStart" style="background:linear-gradient(145deg,var(--clay),#6b543c)"><i class="fa-solid fa-play"></i> スタート</button>
+      </div>
+
+      <div class="spell-stage" id="spellStage" hidden>
+        <div class="quiz-top">
+          <span class="quiz-progress-text"><span class="cur" id="spellCur">1</span> / <span id="spellMax">20</span></span>
+          <span class="quiz-score" style="background:var(--moss-soft);color:var(--moss)"><i class="fa-solid fa-circle-check"></i> <span id="spellScore">0</span></span>
+        </div>
+        <div class="quiz-steps" id="spellSteps"></div>
+        <div class="spell-q">
+          <div class="sq-type">意味から英単語を入力</div>
+          <div class="sq-mean" id="spellMean">意味</div>
+          <div class="sq-hint" id="spellHintText"></div>
+        </div>
+        <div class="spell-input-wrap">
+          <input type="text" class="spell-input" id="spellInput" placeholder="type here…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text">
+          <button class="spell-submit" id="spellSubmit" aria-label="送信"><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+        <div class="spell-feedback" id="spellFeedback"></div>
+        <button class="quiz-next" id="spellNext">次へ <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+
+      <div class="quiz-result" id="spellResult" hidden>
+        <div class="qr-score-ring">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--surface-sunken)" stroke-width="11"/>
+            <circle id="spellRing" cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="11"
+                    stroke-linecap="round" stroke-dasharray="439.8" stroke-dashoffset="439.8" transform="rotate(-90 80 80)"/>
+          </svg>
+          <div class="qr-num"><span class="big" id="spellCorrect">0</span><span class="small">/ <span id="spellTotal">20</span> 正解</span></div>
+        </div>
+        <h2 id="spellTitle">結果</h2>
+        <p class="qr-msg" id="spellMsg">おつかれさまでした。</p>
+        <div class="qr-review-list" id="spellReviewList"></div>
+        <button class="btn-primary" id="spellRetry" style="margin-bottom:var(--sp-3);background:linear-gradient(145deg,var(--clay),#6b543c)"><i class="fa-solid fa-rotate"></i> もう一度</button>
+        <button class="btn-ghost" id="spellBackHome"><i class="fa-solid fa-house"></i> ホームへ</button>
+      </div>
+    </section>
+
+    <!-- ===== 設定 ===== -->
+    <section class="view" id="view-settings" data-view="settings">
+      <div class="section-head">
+        <h2 class="section-title"><span class="accent-bar"></span>設定</h2>
+      </div>
+
+      <div class="settings-group">
+        <div class="sg-title">表示</div>
+        <div class="setting-row">
+          <span class="sr-icon"><i class="fa-solid fa-circle-half-stroke"></i></span>
+          <div class="sr-text"><h4>ダークモード</h4><p>墨夜の配色に切り替えます</p></div>
+          <div class="sr-control">
+            <label class="switch"><input type="checkbox" id="setDark"><span class="track"><span class="thumb"></span></span></label>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon"><i class="fa-solid fa-volume-high"></i></span>
+          <div class="sr-text"><h4>自動読み上げ</h4><p>カードを開くと発音を再生</p></div>
+          <div class="sr-control">
+            <label class="switch"><input type="checkbox" id="setAutoSpeak"><span class="track"><span class="thumb"></span></span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="sg-title">学習データ</div>
+        <div class="setting-row">
+          <span class="sr-icon"><i class="fa-solid fa-circle-check" style="color:var(--moss)"></i></span>
+          <div class="sr-text"><h4>習得済み</h4><p>覚えたと記録した単語</p></div>
+          <div class="sr-control"><b style="font-family:var(--font-en);font-size:18px;color:var(--moss)" id="setLearnedCount">0</b></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon"><i class="fa-solid fa-star" style="color:var(--vermilion)"></i></span>
+          <div class="sr-text"><h4>お気に入り</h4><p>印をつけた単語</p></div>
+          <div class="sr-control"><b style="font-family:var(--font-en);font-size:18px;color:var(--vermilion)" id="setFavCount">0</b></div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="sg-title">リセット</div>
+        <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:var(--sp-3)">
+          <button class="danger-btn" id="resetLearned"><i class="fa-solid fa-eraser"></i> 学習状況をリセット</button>
+          <button class="danger-btn" id="resetAll" style="background:transparent;border-color:var(--vermilion);"><i class="fa-solid fa-trash-can"></i> すべてのデータを削除</button>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <h3><i class="fa-solid fa-feather-pointed" style="color:var(--gold)"></i> 著作情報</h3>
+        <p>本アプリは学習用に制作されたものです。単語データは「大学入試 上級英単語 100」に基づきます。</p>
+      </div>
+
+      <svg class="sumi-divider" viewBox="0 0 200 20" fill="none" aria-hidden="true">
+        <path d="M2 10 Q 50 2, 100 10 T 198 10" stroke-width="1.4" stroke-linecap="round"/>
+        <circle cx="100" cy="10" r="3" fill="currentColor" stroke="none" opacity=".4"/>
+      </svg>
+      <footer class="app-footer">
+        <div class="footer-seal">上級英単語 100 ／ Advanced Vocabulary</div>
+        <div class="footer-copy">
+          © 2026 上級英単語100 — <b>Created on June 5, 2026</b><br>
+          2026年6月5日 制作 ／ 大学入試・共通テスト 上級語彙学習アプリ
+        </div>
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- ============== TABBAR ============== -->
+  <nav class="tabbar" id="tabbar" aria-label="メインナビゲーション">
+    <span class="tab-indicator" id="tabIndicator"></span>
+    <button class="tab active" data-view="home"><i class="fa-solid fa-house"></i><span>ホーム</span></button>
+    <button class="tab" data-view="list"><i class="fa-solid fa-list-ul"></i><span>一覧</span></button>
+    <button class="tab" data-view="flash"><i class="fa-solid fa-clone"></i><span>カード</span></button>
+    <button class="tab" data-view="quiz"><i class="fa-solid fa-pen-to-square"></i><span>クイズ</span></button>
+    <button class="tab" data-view="settings"><i class="fa-solid fa-gear"></i><span>設定</span></button>
+  </nav>
+
+</div>
+
+<!-- ============== 詳細ボトムシート ============== -->
+<div class="scrim" id="scrim"></div>
+<section class="sheet" id="detailSheet" aria-modal="true" role="dialog" aria-label="単語の詳細">
+  <div class="sheet-handle-wrap" id="sheetHandle"><span class="sheet-handle"></span></div>
+  <div class="sheet-body" id="sheetBody"><!-- JS --></div>
+</section>
+
+<!-- ============== Toast ============== -->
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<!-- ============== Scripts ============== -->
+<script src="js/data/words.js"></script>
+<script src="js/data/examples.js"></script>
+<script src="js/data/relations.js"></script>
+<script src="js/store.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/list.js"></script>
+<script src="js/flash.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/spell.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
